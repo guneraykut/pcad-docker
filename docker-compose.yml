@@ -1,0 +1,37 @@
+version: '3.3'
+
+services:
+    pcad:
+      ports:
+       - "3000:3000"
+      restart: always
+      container_name: pcad
+      depends_on:
+        - mqtt
+        - mongo
+      build:
+        context: ./
+        dockerfile: Dockerfile
+      tty: true
+      networks: 
+        - pcad_network
+    mqtt:
+      image: "hivemq/hivemq4"
+      container_name: mqtt
+      ports:
+        - "1884:1883"
+        - "8080:8080"
+      networks: 
+        - pcad_network
+    mongo:
+      image: "mongo:latest"
+      ports:
+       - "27018:27017"
+      restart: always
+      container_name: mongo
+      tty: true
+      networks: 
+        - pcad_network
+networks:
+  pcad_network:
+    driver: bridge
